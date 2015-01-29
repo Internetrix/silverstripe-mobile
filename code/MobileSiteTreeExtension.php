@@ -4,6 +4,14 @@
  */
 class MobileSiteTreeExtension extends DataExtension {
 	
+	public static $db = array(
+		'DisableMobileRedirect' => 'Boolean'
+	);
+	
+	public function updateSettingsFields(FieldList $fields){
+		$fields->insertAfter(CheckboxField::create('DisableMobileRedirect', 'Disable the mobile redirect for this page?'), 'ParentType');
+	}
+	
 	function MetaTags(&$tags) {
 		$config = SiteConfig::current_site_config();
 
