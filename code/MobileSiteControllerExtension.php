@@ -25,8 +25,9 @@ class MobileSiteControllerExtension extends Extension {
 	 */
 	public function onAfterInit() {
 		self::$is_mobile = false;
-		$config = SiteConfig::current_site_config();
+		$config  = SiteConfig::current_site_config();
 		$request = $this->owner->getRequest();
+		$url 	 = $request->getVar('url');
 		
 		// If we've accessed the homepage as /home/, then we redirect to / and don't want to double redirect here
 		if ($this->owner->redirectedTo()) {
@@ -88,6 +89,13 @@ class MobileSiteControllerExtension extends Extension {
 
 		// If on a mobile device, but not on the mobile domain and has been setup for redirection
 		if(!$this->onMobileDomain() && MobileBrowserDetector::is_mobile() && $config->MobileSiteType == 'RedirectToDomain') {
+			$mobileRedirects = MobileRedirect::get()->filter('Active', true);
+			foreach($mobileRedirects as $mobileRedirect){
+				if($mobileRedirect->MainSiteLink() == $url){
+					return $this->owner->redirect(Controller::join_links($config->MobileDomainNormalized, $mobileRedirect->MobileSiteLink()), 301);
+				}
+			}
+			
 			return $this->owner->redirect($config->MobileDomainNormalized, 301);
 		}
 	}
