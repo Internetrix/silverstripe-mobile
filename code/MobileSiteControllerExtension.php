@@ -35,10 +35,14 @@ class MobileSiteControllerExtension extends Extension {
 		}
 		
 		if(!$this->onMobileDomain()){
+			Debug::show("not mobile");
 			//the user can manually define fullsite to mobile redirects. These take precedence
 			$mobileRedirects = MobileRedirect::get()->filter('Active', true);
 			foreach($mobileRedirects as $mobileRedirect){
+				Debug::show($mobileRedirect->MainSiteLink());
+				Debug::show($url);
 				if(strtoupper($mobileRedirect->MainSiteLink()) == strtoupper($url)){
+					Debug::show("MATCH"); die();
 					return $this->owner->redirect(Controller::join_links($config->MobileDomainNormalized, $mobileRedirect->MobileSiteLink()), 301);
 				}
 			}
