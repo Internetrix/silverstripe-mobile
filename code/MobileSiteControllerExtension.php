@@ -33,6 +33,16 @@ class MobileSiteControllerExtension extends Extension {
 		if ($this->owner->redirectedTo()) {
 			return;
 		}
+		
+		if(!$this->onMobileDomain()){
+			//the user can manually define fullsite to mobile redirects. These take precedence
+			$mobileRedirects = MobileRedirect::get()->filter('Active', true);
+			foreach($mobileRedirects as $mobileRedirect){
+				if(strtoupper($mobileRedirect->MainSiteLink()) == strtoupper($url)){
+					return $this->owner->redirect(Controller::join_links($config->MobileDomainNormalized, $mobileRedirect->MobileSiteLink()), 301);
+				}
+			}
+		}
 
 		// Enforce the site (cookie expires in 1 day)
 		$fullSite = $request->getVar('fullSite');
@@ -89,13 +99,6 @@ class MobileSiteControllerExtension extends Extension {
 
 		// If on a mobile device, but not on the mobile domain and has been setup for redirection
 		if(!$this->onMobileDomain() && MobileBrowserDetector::is_mobile() && $config->MobileSiteType == 'RedirectToDomain') {
-			$mobileRedirects = MobileRedirect::get()->filter('Active', true);
-			foreach($mobileRedirects as $mobileRedirect){
-				if($mobileRedirect->MainSiteLink() == $url){
-					return $this->owner->redirect(Controller::join_links($config->MobileDomainNormalized, $mobileRedirect->MobileSiteLink()), 301);
-				}
-			}
-			
 			return $this->owner->redirect($config->MobileDomainNormalized, 301);
 		}
 	}
@@ -213,5 +216,5 @@ class MobileSiteControllerExtension extends Extension {
 	public function IsBlackBerry() {
 		return MobileBrowserDetector::is_blackberry();
 	}
-
+	
 }
