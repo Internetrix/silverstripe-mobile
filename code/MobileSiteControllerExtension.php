@@ -42,6 +42,10 @@ class MobileSiteControllerExtension extends Extension {
 					return $this->owner->redirect(Controller::join_links($config->MobileDomainNormalized, $mobileRedirect->MobileSiteLink()), 301);
 				}
 			}
+			
+			if($this->owner->DisableMobileRedirect){
+				return;
+			}
 		}
 
 		// Enforce the site (cookie expires in 1 day)
