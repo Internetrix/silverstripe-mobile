@@ -9,7 +9,7 @@ class MobileSiteTreeExtension extends DataExtension {
 	);
 	
 	public function updateSettingsFields(FieldList $fields){
-		$fields->insertAfter(CheckboxField::create('DisableMobileRedirect', 'Disable the mobile redirect for this page?'), 'ParentType');
+		$fields->insertBefore(CheckboxField::create('DisableMobileRedirect', 'Disable the mobile redirect for this page?'), 'ShowInMenus');
 	}
 	
 	function MetaTags(&$tags) {
