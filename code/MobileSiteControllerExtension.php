@@ -28,6 +28,7 @@ class MobileSiteControllerExtension extends Extension {
 		$config  = SiteConfig::current_site_config();
 		$request = $this->owner->getRequest();
 		$url 	 = $request->getVar('url');
+		$url 	.= (substr($url, -1) == '/' ? '' : '/');
 		
 		// If we've accessed the homepage as /home/, then we redirect to / and don't want to double redirect here
 		if ($this->owner->redirectedTo()) {

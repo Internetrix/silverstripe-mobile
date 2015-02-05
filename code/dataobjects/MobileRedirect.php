@@ -37,7 +37,7 @@ class MobileRedirect extends DataObject {
 		$fields->addFieldToTab('Root.Main', OptionsetField::create('MainSiteSource', 'Main Site Source' ,$this->dbObject('MainSiteSource')->enumValues()));
 		$fields->addFieldToTab('Root.Main', DisplayLogicWrapper::create(array(TreeDropdownField::create('MainSiteSiteTreeID', 'Main Site Page', 'SiteTree')))
 			->displayIf("MainSiteSource")->isEqualTo("Page")->end());
-		$fields->addFieldToTab('Root.Main', TextField::create('MainSiteURL', 'Main Site URL')
+		$fields->addFieldToTab('Root.Main', TextField::create('MainSiteURL', 'Main Site URL')->setDescription('Please use relative links i.e "/locations/sydney-wollongong/"')
 			->displayIf("MainSiteSource")->isEqualTo("URL")->end());
 		
 		$fields->addFieldToTab('Root.Main', LiteralField::create('Mobilenote', '<p style="margin-left: 185px;">redirects to...<p>') );
@@ -45,7 +45,7 @@ class MobileRedirect extends DataObject {
 		$fields->addFieldToTab('Root.Main', OptionsetField::create('MobileSiteSource', 'Mobile Site Source' ,$this->dbObject('MobileSiteSource')->enumValues()));
 		$fields->addFieldToTab('Root.Main', DisplayLogicWrapper::create(array(MobileTreeDropdownField::create('MobileSiteSiteTreeID', 'Mobile Site Page', 'SiteTree')))
 			->displayIf("MobileSiteSource")->isEqualTo("Page")->end());
-		$fields->addFieldToTab('Root.Main', TextField::create('MobileSiteURL', 'Mobile Site URL')
+		$fields->addFieldToTab('Root.Main', TextField::create('MobileSiteURL', 'Mobile Site URL')->setDescription('Please use relative links i.e "/prices/sydney-wollongong/"')
 				->displayIf("MobileSiteSource")->isEqualTo("URL")->end());
 		
 		return $fields;
