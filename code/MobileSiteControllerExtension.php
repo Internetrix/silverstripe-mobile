@@ -35,20 +35,13 @@ class MobileSiteControllerExtension extends Extension {
 			return;
 		}
 		
+		//the the admin has decided to turn off redirects for this page, nothing else matters
 		if(!$this->onMobileDomain() && MobileBrowserDetector::is_mobile()){
-			//the user can manually define fullsite to mobile redirects. These take precedence
-			$mobileRedirects = MobileRedirect::get()->filter('Active', true);
-			foreach($mobileRedirects as $mobileRedirect){
-				if(strtoupper($mobileRedirect->MainSiteLink()) == strtoupper($url)){
-					return $this->owner->redirect(Controller::join_links($config->MobileDomainNormalized, $mobileRedirect->MobileSiteLink()), 301);
-				}
-			}
-			
 			if($this->owner->DisableMobileRedirect){
 				return;
 			}
 		}
-
+		
 		// Enforce the site (cookie expires in 1 day)
 		$fullSite = $request->getVar('fullSite');
 
@@ -67,6 +60,24 @@ class MobileSiteControllerExtension extends Extension {
 		}
 		else {
 			$fullSiteCookie = Cookie::get('fullSite');
+		}
+		
+		//if using a mobile device when not on the mobile domain and have not requested to use the full site
+		if(!$this->onMobileDomain() && MobileBrowserDetector::is_mobile() && !(is_numeric($fullSiteCookie) && $fullSiteCookie) ){
+			//the user can manually define fullsite to mobile redirects. These take precedence
+			$mobileRedirects = MobileRedirect::get()->filter('Active', true);
+			foreach($mobileRedirects as $mobileRedirect){
+				if(strtoupper($mobileRedirect->MainSiteLink()) == strtoupper($url)){
+					return $this->owner->redirect(Controller::join_links($config->MobileDomainNormalized, $mobileRedirect->MobileSiteLink()), 301);
+				}
+			}
+				
+			if(method_exists($this->owner, 'data')){
+				$page = $this->owner->data();
+				if(method_exists($page, 'mobileRedirect')){
+					return $this->owner->redirect(Controller::join_links($config->MobileDomainNormalized, $page->mobileRedirect()), 301);
+				}
+			}
 		}
 		
 		if(is_numeric($fullSiteCookie)) {
